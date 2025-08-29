@@ -18,8 +18,6 @@ export const { actions, reducer } = createSlice({
         id: Date.now(),
         ...action.payload,
       });
-
-      localStorage.setItem("tickets", JSON.stringify(state.value));
     },
     updateTicket: (state, action) => {
       const index = state.value.findIndex(
@@ -27,17 +25,21 @@ export const { actions, reducer } = createSlice({
       );
       if (index === -1) return;
 
-      // Replace entire ticket with new data
       state.value[index] = action.payload;
-
-      localStorage.setItem("tickets", JSON.stringify(state.value));
     },
     removeTicket: (state, action) => {
       state.value = state.value.filter(
         (ticket: Ticket) => ticket.id !== action.payload.id
       );
-      localStorage.setItem("tickets", JSON.stringify(state.value));
     },
+  },
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      () => true,
+      (state) => {
+        localStorage.setItem("tickets", JSON.stringify(state.value));
+      }
+    );
   },
 });
 
